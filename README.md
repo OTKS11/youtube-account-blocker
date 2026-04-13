@@ -1,1 +1,19 @@
-# youtube-account-blocker
+# YouTube Account Blocker
+
+YouTubeのコメント欄から、特定のアカウントやキーワードを含むコメントを非表示にするChrome拡張機能です。
+
+## 作った理由
+
+YouTubeの動画のコメント欄から特定のユーザーをブロックする手軽な方法がなく、
+既存の拡張機能も互換性の問題で動作しないものが多かったため、自分用に作成しました。
+
+## 機能
+
+- コメント横にブロックボタンを追加
+- ブロックしたアカウントのコメントを非表示
+- キーワードフィルター機能
+
+## 使用技術
+
+- JavaScript
+- Chrome Extension API (Manifest V3)
