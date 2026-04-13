@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Comment Blocker</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif;
+      width: 340px;
+      min-height: 200px;
+      background: #0f0f0f;
+      color: #e0e0e0;
+      font-size: 13px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #c00000, #ff2020);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    header span.icon {
+      font-size: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #333;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #aaa;
+      padding: 9px 0;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: color 0.2s, border-bottom 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: #ff4444;
+      border-bottom: 2px solid #ff4444;
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: #ddd;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 12px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: #e0e0e0;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #ff4444;
+    }
+
+    input[type="text"]::placeholder {
+      color: #666;
+    }
+
+    .btn-add {
+      background: #c00000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover {
+      background: #ff2020;
+    }
+
+    .list-section {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .list-section::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .list-section::-webkit-scrollbar-thumb {
+      background: #444;
+      border-radius: 2px;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+
+    .list-item:hover {
+      background: #1e1e1e;
+    }
+
+    .list-item-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #ccc;
+    }
+
+    .list-item-tag {
+      font-size: 10px;
+      background: #333;
+      color: #aaa;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 6px;
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: color 0.2s, background 0.2s;
+      margin-left: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-remove:hover {
+      color: #ff4444;
+      background: rgba(255, 68, 68, 0.15);
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: #555;
+      padding: 16px 0;
+      font-size: 12px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stats-bar {
+      padding: 8px 12px;
+      background: #1a1a1a;
+      border-top: 1px solid #333;
+      font-size: 11px;
+      color: #666;
+      display: flex;
+      gap: 12px;
+    }
+
+    .stats-bar span b {
+      color: #ff4444;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="icon">🚫</span>
+  <h1>YouTube Comment Blocker</h1>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="users">👤 ユーザー</button>
+  <button class="tab-btn" data-tab="keywords">🔤 キーワード</button>
+</nav>
+
+<!-- ユーザーブロックタブ -->
+<section class="tab-content active" id="tab-users">
+  <div class="input-row">
+    <input type="text" id="input-user" placeholder="ブロックするユーザー名を入力...">
+    <button class="btn-add" id="btn-add-user">追加</button>
+  </div>
+  <p class="section-title">ブロック中のユーザー</p>
+  <div class="list-section" id="list-users">
+    <p class="empty-msg">ブロック中のユーザーはいません</p>
+  </div>
+</section>
+
+<!-- キーワードフィルタータブ -->
+<section class="tab-content" id="tab-keywords">
+  <div class="input-row">
+    <input type="text" id="input-keyword" placeholder="非表示にするキーワードを入力...">
+    <button class="btn-add" id="btn-add-keyword">追加</button>
+  </div>
+  <p class="section-title">フィルター中のキーワード</p>
+  <div class="list-section" id="list-keywords">
+    <p class="empty-msg">フィルター中のキーワードはありません</p>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <span>ブロック中：<b id="stat-users">0</b> ユーザー</span>
+  <span>フィルター：<b id="stat-keywords">0</b> ワード</span>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
